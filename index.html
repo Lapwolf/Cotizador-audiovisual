@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cotizador audiovisual</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#eef1f5;--panel:#fff;--ink:#16202e;--mute:#5d6b7e;--line:#d8dee7;--acc:#0b6e8a;--acc2:#e8f3f7;--warn:#b4501b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1620;--panel:#182230;--ink:#e8edf3;--mute:#9aa8ba;--line:#2a3a4e;--acc:#5ec1dc;--acc2:#16303b;--warn:#f0a070;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1620;--panel:#182230;--ink:#e8edf3;--mute:#9aa8ba;--line:#2a3a4e;--acc:#5ec1dc;--acc2:#16303b;--warn:#f0a070;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 Manrope,system-ui,-apple-system,"Segoe UI",sans-serif}
+.app{max-width:1120px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:26px;font-weight:800;margin:0 0 2px;letter-spacing:-.01em}
+.sub{color:var(--mute);margin:0 0 18px}
+.layout{display:grid;grid-template-columns:1fr 320px;gap:18px;align-items:start}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+label.f{display:flex;flex-direction:column;font-size:12px;color:var(--mute);gap:3px;font-weight:600}
+input,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%}
+input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:10px;overflow-x:auto}
+.tab{background:none;border:0;border-bottom:3px solid transparent;padding:9px 12px;font:inherit;font-weight:600;color:var(--mute);cursor:pointer;white-space:nowrap}
+.tab[aria-selected=true]{color:var(--acc);border-color:var(--acc)}
+.tab .n{background:var(--acc2);color:var(--acc);border-radius:20px;padding:0 7px;font-size:12px;margin-left:5px}
+.note{font-size:12.5px;color:var(--warn);margin:0 0 8px}
+.cat{font-size:12px;font-weight:800;color:var(--mute);margin:14px 0 4px}
+.row{display:grid;grid-template-columns:28px 1fr 64px 76px 92px 92px;gap:8px;align-items:center;padding:6px 4px;border-bottom:1px solid var(--line)}
+.row.off{opacity:.55}
+.row input[type=checkbox]{width:18px;height:18px;accent-color:var(--acc)}
+.row .u{font-size:12.5px;color:var(--mute)}.row .eq{grid-column:2/-1;padding:5px 8px;font-size:13px}
+.row .st{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.row input[type=number]{padding:5px 6px;text-align:right}
+.hd{font-size:11.5px;color:var(--mute);font-weight:600}
+aside{position:sticky;top:12px}
+.tot{display:flex;justify-content:space-between;padding:5px 0;font-variant-numeric:tabular-nums}
+.tot.big{border-top:2px solid var(--ink);margin-top:6px;padding-top:10px;font-size:22px;font-weight:800;color:var(--acc)}
+.btns{display:grid;gap:8px;margin-top:14px}
+button.b{font:inherit;font-weight:600;padding:9px;border-radius:7px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+button.b.p{background:var(--acc);border-color:var(--acc);color:#fff}
+:root[data-theme="dark"] button.b.p{color:#06202a}
+.msg{font-size:12.5px;color:var(--acc);min-height:18px;margin-top:6px}
+#doc{display:none}
+@media (max-width:860px){.layout{grid-template-columns:1fr}aside{position:static}.meta{grid-template-columns:1fr 1fr}
+.row{grid-template-columns:28px 1fr 1fr 1fr;grid-template-areas:"c n n n" ". q p s" ". e e e";row-gap:4px}
+.row .nm{grid-area:n}.row .ck{grid-area:c}.row .q{grid-area:q}.row .pp{grid-area:p}.row .st{grid-area:s}.row .eq{grid-area:e}.row .u,.hd{display:none}}
+@media print{body{background:#fff;color:#000}.app{display:none}#doc{display:block;padding:24px;font-size:13px}
+#doc table{width:100%;border-collapse:collapse}#doc th,#doc td{border-bottom:1px solid #bbb;padding:5px 6px;text-align:left}
+#doc td.r,#doc th.r{text-align:right}#doc h2{margin:0 0 4px}}
+.hi{border-bottom:1px solid var(--line);padding:8px 0;font-size:13px}.hi .b{padding:3px 8px;font-size:12px;margin-top:4px}.hi select{font:inherit;font-size:12px;padding:2px}details summary{cursor:pointer;margin:12px 0 6px}#hl{max-height:260px;overflow:auto}#bk{margin-top:8px}
+#mon,#cbase{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%}
+#cl{margin-top:6px}#cl .b{padding:3px 8px;font-size:12px;margin:2px}
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Cotizador audiovisual</h1>
+  <p class="sub">Marca lo que incluye el servicio, ajusta cantidades y precios, y el total se calcula solo. Todo se guarda en este navegador.</p>
+  <div class="layout">
+    <main class="card">
+      <div class="meta">
+        <label class="f">Cliente<input id="cliente"></label>
+        <label class="f">Proyecto<input id="proyecto"></label>
+        <label class="f">Fecha<input id="fecha" type="date"></label>
+        <label class="f">Vigencia (días)<input id="vig" type="number" min="0"></label>
+        <label class="f">Descuento (%)<input id="desc" type="number" min="0" max="100" step="0.5"></label>
+        
+        <label class="f">Adelanto (%)<input id="adel" type="number" min="0" max="100" step="5"></label>
+        <label class="f">Moneda de la cotización<select id="mon"><option value="PEN">Soles (S/)</option><option value="USD">Dólares (US$)</option></select></label>
+        <label class="f">Tipo de cambio (S/ por US$)<input id="tc" type="number" min="0" step="0.01"></label>
+        <label class="f">Meses de contrato (redes)<input id="mes" type="number" min="1" step="1"></label>
+        <label class="f">Descuento por contrato (%)<input id="dct" type="number" min="0" max="100" step="1"></label>
+      </div>
+      <select id="pk" aria-label="Aplicar paquete" style="margin-bottom:10px;padding:7px 9px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit"></select>
+      <div class="tabs" role="tablist" id="tabs"></div>
+      <p class="note" id="note"></p>
+      <div class="row hd" aria-hidden="true"><span></span><span>Servicio / recurso</span><span>Cant.</span><span>Unidad</span><span>Precio S/</span><span style="text-align:right">Subtotal</span></div>
+      <div id="list"></div>
+      <label class="f" style="margin-top:16px">Observaciones / condiciones<textarea id="obs" rows="4"></textarea></label>
+      <div id="cl"></div>
+      <details><summary><b>Mi marca y datos de pago</b></summary><div class="meta"><label class="f">Nombre / marca<input id="marca"></label><label class="f">Contacto<input id="contacto"></label><label class="f">Cuenta bancaria / Yape<input id="cuenta"></label><label class="f">Logo (opcional)<input id="logo" type="file" accept="image/*"></label></div></details>
+    </main>
+    <aside class="card">
+      <strong>Resumen</strong>
+      <div id="sum" style="margin-top:8px"></div>
+      <div id="mn" class="tot"></div><label class="f" style="margin-top:10px">Mis costos internos (S/, no sale en el PDF)<input id="costo" type="number" min="0" step="any"></label><strong style="font-size:13px;display:block;margin-top:12px">Comisiones (solo uso interno)</strong>
+      <div class="meta" style="grid-template-columns:1fr 1fr;margin:6px 0 8px"><label class="f">Quién refiere<input id="refiere"></label><label class="f">Comisión (%)<input id="com" type="number" min="0" max="100" step="0.5"></label><label class="f" style="grid-column:1/-1">Calcular comisión sobre<select id="cbase"><option value="tot">Total de la cotización</option><option value="gan">Ganancia (total − costos)</option></select></label></div><div id="mg"></div>
+      <div class="btns">
+        <button class="b p" id="pdf">PDF para el cliente</button>
+        <button class="b" id="pin">PDF interno (comisión y ganancia)</button>
+        <button class="b" id="copy">Copiar para WhatsApp</button>
+        <button class="b" id="ac">Generar acuerdo de servicio</button>
+        <button class="b" id="sv">Guardar cotización</button>
+        <button class="b" id="reset">Nueva cotización</button>
+      </div>
+      <div class="msg" id="msg" role="status"></div>
+      <details><summary><b>Historial y respaldo</b></summary><div id="hl"></div><div id="est"></div><textarea id="bk" rows="3" placeholder="Aquí aparece el respaldo; pega uno para restaurar"></textarea><div class="btns"><button class="b" id="bkc">Copiar respaldo</button><button class="b" id="bkr">Restaurar desde texto</button></div></details>
+    </aside>
+  </div>
+</div>
+<div id="doc"></div>
+<script>
+const TABS=[
+{id:"rec",name:"Grabación y equipos",items:[
+["Cámara","Cámara principal","día",350],["Cámara","Cámara secundaria","día",250],["Óptica","Kit de lentes","día",180],["Soporte","Trípode / monopié","día",50],["Movimiento","Gimbal / estabilizador","día",120],["Iluminación","Kit de luces LED","kit/día",180],["Audio","Micrófono inalámbrico","kit/día",100],["Audio","Grabadora / boom","día",90],["Monitoreo","Monitor externo","día",80],["Accesorios","Baterías, memorias y accesorios","kit/día",80],["Personal","Camarógrafo / operador de cámara","jornada",300],["Personal","Director / realizador","jornada",350],["Personal","Asistente de cámara","jornada",180],["Personal","Técnico de iluminación","jornada",220],["Personal","Sonidista","jornada",250],["Producción","Productor / coordinación","jornada",250],["Logística","Movilidad y transporte de equipos","servicio",100],["Locación","Alquiler de estudio / locación","jornada",250],["Tiempo","Hora adicional de grabación","hora",80],["Entrega","Entrega urgente de material","servicio",150],["Cámara","Celular (cámara de celular)","día",100],["Aéreo","Drone (alquiler del equipo)","día",300],["Aéreo","Drone: minuto de vuelo","minuto",40]]},
+{id:"edi",name:"Edición",items:[
+["Redes sociales","Reel / TikTok / Short sencillo (hasta 60 s)","video",150],["Redes sociales","Reel con edición dinámica y recursos gráficos","video",250],["YouTube","Video estándar (hasta 10 min)","video",400],["Corporativo","Video corporativo / entrevista","video",500],["Publicidad","Edición de pieza publicitaria","video",650],["Color","Corrección y gradación de color","video",150],["Audio","Limpieza y mezcla de audio","video",100],["Texto","Subtítulos (hasta 60 s)","video",50],["Texto","Subtítulos de video largo","minuto final",15],["Motion","Motion graphics básico","hora",100],["Motion","Animación / gráficos avanzados","hora",160],["Música","Búsqueda y musicalización","video",80],["Formatos","Adaptación a formato vertical u horizontal","versión",60],["Cambios","Ronda adicional de cambios","ronda",70],["Urgencia","Entrega urgente (recargo fijo)","servicio",150],["Material","Organización de material bruto","hora",60],["Proyecto","Proyecto editable / archivos fuente","entrega",150]]},
+{id:"foto",name:"Fotografía",note:"Esta hoja no estaba en tu Excel: los servicios y precios son ejemplos para que los reemplaces.",items:[
+["Sesión","Sesión fotográfica (hasta 2 h)","sesión",300],["Sesión","Hora adicional de fotografía","hora",120],["Eventos","Cobertura de evento","jornada",450],["Eventos","Segundo fotógrafo","jornada",250],["Producto","Fotografía de producto","foto",40],["Equipo","Flash / iluminación de estudio","día",150],["Locación","Alquiler de estudio / fondo","jornada",250],["Retoque","Retoque básico","foto",8],["Retoque","Retoque avanzado","foto",25],["Entrega","Galería online privada","entrega",80],["Entrega","Impresiones / álbum","servicio",200],["Entrega","Entrega urgente","servicio",150]]},
+{id:"red",name:"Redes sociales",note:"Precios de ejemplo. Lo mensual se multiplica por los meses del contrato; «Inicio de contrato» se cobra una sola vez.",items:[["Contenido","Reel / TikTok (edición incluida)","video",180],["Contenido","Carrusel diseñado","pieza",80],["Contenido","Post estático diseñado","pieza",50],["Contenido","Historias diseñadas (set de 3)","set",60],["Contenido","Video largo para YouTube (hasta 10 min)","video",400],["Contenido","Fotos para redes (edición básica)","foto",15],["Gestión","Calendario de contenido","calendario",150],["Gestión","Copys y hashtags","publicación",15],["Gestión","Community management (comentarios y mensajes)","servicio",300],["Gestión","Reporte de métricas","reporte",120],["Gestión","Gestión de pauta publicitaria (sin inversión)","servicio",250],["Producción","Sesión de grabación (media jornada)","sesión",450],["Producción","Sesión de fotos","sesión",300],["Inicio de contrato","Auditoría de cuentas","vez",200],["Inicio de contrato","Estrategia de contenido","vez",350],["Inicio de contrato","Identidad visual básica y plantillas","vez",400]]}];
+const OBS="Especificar entregables, horarios, locación, transporte, forma de pago, rondas de cambios y cualquier exclusión.";
+const KEY="cotizador_v1",HK="cotizador_hist_v1",FL=["cliente","proyecto","fecha","vig","desc","adel","obs","marca","contacto","cuenta","mon","tc","costo","mes","dct","refiere","com","cbase"];
+const $=id=>document.getElementById(id);
+const today=()=>new Date().toISOString().slice(0,10);
+const fresh=()=>{const it={};TABS.forEach(t=>t.items.forEach((x,i)=>it[t.id+i]={on:false,q:1,p:x[3]}));return{meta:{cliente:"",proyecto:"",fecha:today(),vig:15,desc:0,adel:50,obs:OBS,marca:"",contacto:"",cuenta:"",num:"",mon:"PEN",tc:3.75,costo:0,mes:1,dct:0,refiere:"",com:0,cbase:"tot"},items:it}};
+let S=fresh(),cur="rec";
+try{const r=localStorage.getItem(KEY);if(r){const o=JSON.parse(r);S.meta={...S.meta,...o.meta};Object.keys(S.items).forEach(k=>{if(o.items&&o.items[k])S.items[k]=o.items[k]})}}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const m=n=>{const u=S.meta.mon==="USD";return(u?"US$ ":"S/ ")+(u?n/(+S.meta.tc||3.75):n).toLocaleString("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2})};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function lines(){const L=[];TABS.forEach(t=>t.items.forEach((x,i)=>{const s=S.items[t.id+i],r=t.id==="red"&&x[0]!==ONE,mes=+S.meta.mes||1,dc=+S.meta.dct||0;if(s.on&&s.q>0)L.push({sec:t.name,cat:x[0],n:x[1],e:s.e||"",u:x[2]+(r?" al mes"+(mes>1?" × "+mes+" meses":"")+(dc?" (−"+dc+"% contrato)":""):""),q:+s.q,p:+s.p,st:s.q*s.p*(r?mes*(1-dc/100):1),rec:r})}));return L}
+function totals(){const L=lines(),sub=L.reduce((a,l)=>a+l.st,0),d=sub*(+S.meta.desc||0)/100,base=sub-d,mes=+S.meta.mes||1,mens=L.filter(l=>l.rec).reduce((a,l)=>a+l.st,0)*(1-(+S.meta.desc||0)/100)/mes;return{L,sub,d,base,tot:base,mens}}
+function tabs(){$("tabs").innerHTML=TABS.map(t=>{const n=t.items.filter((_,i)=>S.items[t.id+i].on).length;return`<button class="tab" role="tab" aria-selected="${t.id===cur}" data-t="${t.id}">${t.name}<span class="n">${n}</span></button>`}).join("")}
+const ONE="Inicio de contrato";
+const vh=mt=>{const d=new Date(mt.fecha+"T00:00:00");d.setDate(d.getDate()+(+mt.vig||0));return isNaN(d)?"":d.toLocaleDateString("es-PE")};
+const ord=t=>{const c=[...new Set(t.items.map(x=>x[0]))];return t.items.map((_,i)=>i).sort((a,b)=>c.indexOf(t.items[a][0])-c.indexOf(t.items[b][0])||a-b)};
+function list(){const t=TABS.find(x=>x.id===cur);$("note").textContent=t.note||"";let last="",h="";ord(t).forEach(i=>{const x=t.items[i],s=S.items[t.id+i],k=t.id+i;if(x[0]!==last){h+=`<div class="cat">${esc(x[0])}</div>`;last=x[0]}
+h+=`<div class="row ${s.on?"":"off"}" data-k="${k}"><span class="ck"><input type="checkbox" aria-label="Incluir ${esc(x[1])}" data-f="on" ${s.on?"checked":""}></span><span class="nm">${esc(x[1])}</span><input class="q" type="number" min="0" step="any" aria-label="Cantidad" data-f="q" value="${s.q}"><span class="u">${esc(x[2])}${t.id==="red"&&x[0]!==ONE?" /mes":""}</span><input class="pp" type="number" min="0" step="any" aria-label="Precio unitario" data-f="p" value="${s.p}"><span class="st" id="st${k}">${s.on?m(s.q*s.p):"—"}</span>${t.id==="rec"?`<input class="eq" type="text" data-f="e" aria-label="Equipo a utilizar: ${esc(x[1])}" placeholder="${/lentes/i.test(x[1])?"Tipo de lentes (ej. 24-70 mm f/2.8, 50 mm f/1.8)":"Equipo / modelo a utilizar"}" value="${esc(s.e||"")}">`:""}</div>`});$("list").innerHTML=h}
+function sum(){const T=totals(),g0=T.base-(+S.meta.costo||0),cm=(+S.meta.com||0)/100*(S.meta.cbase==="gan"?Math.max(g0,0):T.base),g=g0-cm;$("mn").innerHTML=T.mens?`<span>Mensualidad (redes)</span><span>${m(T.mens)}</span>`:"";$("mg").innerHTML=`<div class="tot"><span>Comisión${S.meta.refiere?" ("+esc(S.meta.refiere)+")":""}</span><span>${m(cm)}</span></div><div class="tot"><span>Ganancia neta (interna)</span><span>${m(g)} (${T.base?Math.round(g/T.base*100):0}%)</span></div>`;$("sum").innerHTML=`<div class="tot"><span>Subtotal</span><span>${m(T.sub)}</span></div><div class="tot"><span>Descuento (${+S.meta.desc||0}%)</span><span>− ${m(T.d)}</span></div><div class="tot big"><span>Total</span><span>${m(T.tot)}</span></div><div class="tot"><span>Adelanto (${+S.meta.adel||0}%)</span><span>${m(T.tot*(+S.meta.adel||0)/100)}</span></div><div class="tot"><span>Saldo contra entrega</span><span>${m(T.tot*(1-(+S.meta.adel||0)/100))}</span></div>`;
+const mt=S.meta;$("doc").innerHTML=`<h2>${mt.logo?`<img src="${mt.logo}" alt="" style="max-height:60px;display:block;margin-bottom:6px">`:""}${esc(mt.marca||"Cotización de servicios audiovisuales")}</h2><p>${esc(mt.contacto)}</p><h3>Cotización ${esc(mt.num||"")}</h3><p>Cliente: <b>${esc(mt.cliente)}</b> &nbsp; Proyecto: <b>${esc(mt.proyecto)}</b><br>Fecha: ${esc(mt.fecha)} &nbsp; Válida hasta: ${vh(mt)} (${esc(mt.vig)} días) &nbsp; Moneda: ${mt.mon==="USD"?"dólares (US$)":"soles (S/)"}</p><table><tr><th>Servicio</th><th class="r">Cant.</th><th>Unidad</th><th class="r">Precio</th><th class="r">Subtotal</th></tr>${T.L.map(l=>`<tr><td>${esc(l.n)}${l.e?"<br><small>"+esc(l.e)+"</small>":""}</td><td class="r">${l.q}</td><td>${esc(l.u)}</td><td class="r">${m(l.p)}</td><td class="r">${m(l.st)}</td></tr>`).join("")}</table><p style="text-align:right">${T.mens?`Mensualidad ${m(T.mens)} (contrato de ${+mt.mes||1} meses)<br>`:""}Subtotal ${m(T.sub)}<br>Descuento −${m(T.d)}<br><b style="font-size:16px">TOTAL ${m(T.tot)}</b></p><p><b>Forma de pago:</b> adelanto de ${+mt.adel||0}% (${m(T.tot*(+mt.adel||0)/100)}) y saldo de ${m(T.tot*(1-(+mt.adel||0)/100))} contra entrega.${mt.cuenta?"<br>Cuenta: "+esc(mt.cuenta):""}</p><p><b>Condiciones:</b><br>${esc(mt.obs).replace(/\n/g,"<br>")}</p>`}
+function flash(t){$("msg").textContent=t;setTimeout(()=>$("msg").textContent="",2500)}
+function fill(){FL.forEach(k=>$(k).value=S.meta[k])}
+FL.forEach(k=>$(k).addEventListener("input",e=>{S.meta[k]=e.target.value;save();sum();if(k==="mon"||k==="tc")list()}));
+$("tabs").addEventListener("click",e=>{const b=e.target.closest("[data-t]");if(b){cur=b.dataset.t;tabs();list()}});
+$("list").addEventListener("input",e=>{const r=e.target.closest(".row"),f=e.target.dataset.f;if(!r||!f)return;const s=S.items[r.dataset.k];s[f]=f==="on"?e.target.checked:f==="e"?e.target.value:(parseFloat(e.target.value)||0);
+if(f==="on"){if(e.target.checked&&!s.q)s.q=1;r.classList.toggle("off",!s.on);tabs()}$("st"+r.dataset.k).textContent=s.on?m(s.q*s.p):"—";save();sum()});
+$("pdf").onclick=()=>window.print();
+$("reset").onclick=()=>{if(confirm("¿Empezar una cotización nueva? Se limpian cliente, selección y cantidades (tus precios se mantienen).")){const p={};Object.keys(S.items).forEach(k=>p[k]=S.items[k].p);const b=S.meta;S=fresh();["marca","contacto","cuenta","logo","mon","tc","adel","vig","obs"].forEach(k=>{if(b[k]!==undefined)S.meta[k]=b[k]});Object.keys(p).forEach(k=>S.items[k].p=p[k]);save();fill();tabs();list();sum()}};
+$("copy").onclick=()=>{const T=totals(),mt=S.meta;const tx=`*Cotización${mt.proyecto?" – "+mt.proyecto:""}*\nCliente: ${mt.cliente||"—"}\nFecha: ${mt.fecha} · Válida hasta: ${vh(mt)}\n\n`+T.L.map(l=>`• ${l.n}${l.e?" – "+l.e:""} (${l.q} ${l.u}) – ${m(l.st)}`).join("\n")+`\n\nSubtotal: ${m(T.sub)}\nDescuento: −${m(T.d)}\n*TOTAL: ${m(T.tot)}*\n\n${mt.obs}`;
+const ok=()=>flash("Copiado. Pégalo en WhatsApp o correo.");const fb=()=>{const a=document.createElement("textarea");a.value=tx;document.body.appendChild(a);a.select();try{document.execCommand("copy");ok()}catch(e){flash("No se pudo copiar.")}a.remove()};
+try{navigator.clipboard.writeText(tx).then(ok,fb)}catch(e){fb()}};
+const PK={"Reel + grabación de medio día":{rec0:1,rec2:1,rec3:1,rec10:1,rec16:1,edi1:1,edi11:1},"Video corporativo completo":{rec0:1,rec1:1,rec2:1,rec3:1,rec5:1,rec6:1,rec10:1,rec11:1,rec15:1,rec16:1,edi3:1,edi5:1,edi6:1,edi11:1},"Cobertura de evento":{foto2:1,foto3:1,foto7:80,foto9:1},"Sesión de retratos":{foto0:1,foto7:15,foto9:1},"Redes: Básico":{red0:4,red1:4,red3:4,red6:1,red7:8,red9:1},"Redes: Crecimiento":{red0:8,red1:4,red2:4,red3:8,red6:1,red7:16,red8:1,red9:1,red11:1,red13:1,red14:1},"Redes: Completo":{red0:12,red1:8,red2:4,red3:12,red4:1,red6:1,red7:24,red8:1,red9:1,red10:1,red11:2,red12:1,red13:1,red14:1,red15:1}};
+$("pk").innerHTML='<option value="">Aplicar paquete…</option>'+Object.keys(PK).map(k=>`<option>${k}</option>`).join("");
+$("pk").onchange=e=>{const p=PK[e.target.value];if(!p)return;Object.keys(S.items).forEach(k=>S.items[k].on=false);Object.keys(p).forEach(k=>{S.items[k].on=true;S.items[k].q=p[k]});e.target.value="";save();tabs();list();sum();flash("Paquete aplicado: ajusta cantidades y precios.")};
+const getH=()=>{try{return JSON.parse(localStorage.getItem(HK))||{n:0,l:[]}}catch(e){return{n:0,l:[]}}};
+const putH=h=>{try{localStorage.setItem(HK,JSON.stringify(h))}catch(e){flash("No se pudo guardar")}};
+const ST=["Borrador","Enviada","Aceptada","Rechazada"];
+function dias(q){const d=new Date(q.meta.fecha+"T00:00:00");d.setDate(d.getDate()+(+q.meta.vig||0));return Math.ceil((d-new Date())/864e5)}
+function hist(){stats();const h=getH();$("hl").innerHTML=h.l.length?h.l.map(q=>{const d=dias(q),v=(q.est==="Enviada"||q.est==="Borrador")?(d<0?'<b style="color:var(--warn)">vencida</b>':`vence en ${d} d`):"";return`<div class="hi" data-id="${q.id}"><b>${esc(q.meta.num)}</b> ${esc(q.meta.cliente||"Sin cliente")} · ${m(q.tot)}<br><select aria-label="Estado">${ST.map(s=>`<option${s===q.est?" selected":""}>${s}</option>`).join("")}</select> <small>${v}</small><br><button class="b" data-a="open">Abrir</button> <button class="b" data-a="dup">Duplicar</button> <button class="b" data-a="del">Borrar</button></div>`}).join(""):"<small>Aún no hay cotizaciones guardadas.</small>"}
+$("sv").onclick=()=>{const T=totals(),h=getH();let q=h.l.find(x=>S.meta.num&&x.meta.num===S.meta.num);if(!q){h.n++;S.meta.num="COT-"+String(h.n).padStart(4,"0");q={id:Date.now(),est:"Borrador"};h.l.unshift(q)}q.meta={...S.meta};q.items=JSON.parse(JSON.stringify(S.items));q.tot=T.tot;putH(h);save();sum();hist();flash("Guardada como "+S.meta.num)};
+$("hl").addEventListener("click",e=>{const b=e.target.closest("[data-a]"),r=e.target.closest(".hi");if(!b||!r)return;const h=getH(),q=h.l.find(x=>x.id==r.dataset.id);if(!q)return;const a=b.dataset.a;if(a==="open"||a==="dup"){S=JSON.parse(JSON.stringify({meta:{...fresh().meta,...q.meta},items:{...fresh().items,...q.items}}));if(a==="dup"){S.meta.num="";S.meta.fecha=today()}save();fill();tabs();list();sum();flash(a==="dup"?"Copia lista: guárdala para darle número.":"Abierta "+q.meta.num)}if(a==="del"&&confirm("¿Borrar "+q.meta.num+"?")){h.l=h.l.filter(x=>x!==q);putH(h);hist()}});
+$("hl").addEventListener("change",e=>{const r=e.target.closest(".hi"),h=getH(),q=r&&h.l.find(x=>x.id==r.dataset.id);if(q){q.est=e.target.value;putH(h);hist()}});
+$("bkc").onclick=()=>{const t=JSON.stringify({h:getH(),s:S});$("bk").value=t;$("bk").select();try{navigator.clipboard.writeText(t).then(()=>flash("Respaldo copiado."),()=>flash("Copia el texto a mano."))}catch(e){flash("Copia el texto a mano.")}};
+$("bkr").onclick=()=>{try{const o=JSON.parse($("bk").value);if(!o.h||!Array.isArray(o.h.l))throw 0;putH(o.h);if(o.s&&o.s.meta&&o.s.items){S={meta:{...fresh().meta,...o.s.meta},items:{...fresh().items,...o.s.items}};save();fill();tabs();list();sum()}hist();flash("Respaldo restaurado.")}catch(e){flash("Ese texto no es un respaldo válido.")}};
+function stats(){const l=getH().l,ac=l.filter(q=>q.est==="Aceptada"),dec=l.filter(q=>q.est!=="Borrador").length,sv={},cl={},ms={};
+ac.forEach(q=>{const k=new Date(q.id).toISOString().slice(0,7);ms[k]=(ms[k]||0)+q.tot;const c=q.meta.cliente||"Sin cliente";cl[c]=(cl[c]||0)+q.tot;TABS.forEach(t=>t.items.forEach((x,i)=>{const s=q.items[t.id+i];if(s&&s.on)sv[x[1]]=(sv[x[1]]||0)+s.q*s.p}))});
+const top=o=>Object.entries(o).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>esc(e[0])+" ("+m(e[1])+")").join(", ")||"—";
+$("est").innerHTML=`<p><b>Estadísticas</b><br>Aceptación: ${dec?Math.round(ac.length/dec*100):0}% (${ac.length} de ${dec} enviadas)<br>Ingresos aceptados: ${m(ac.reduce((a,q)=>a+q.tot,0))}<br>Por mes: ${Object.keys(ms).sort().map(k=>k+" "+m(ms[k])).join(", ")||"—"}<br>Más vendidos: ${top(sv)}<br>Mejores clientes: ${top(cl)}</p>`}
+$("ac").onclick=()=>{const T=totals(),mt=S.meta,a=+mt.adel||0;$("doc").innerHTML=`<h2>${mt.logo?`<img src="${mt.logo}" alt="" style="max-height:60px;display:block;margin-bottom:6px">`:""}${esc(mt.marca||"Acuerdo de servicio")}</h2><h3>Acuerdo de servicio ${esc(mt.num)}</h3><p>Entre ${esc(mt.marca||"el prestador")} (el Prestador) y ${esc(mt.cliente||"el Cliente")} (el Cliente), para el proyecto «${esc(mt.proyecto)}», con fecha ${esc(mt.fecha)}.</p><p><b>1. Alcance.</b></p><ul>${T.L.map(l=>`<li>${esc(l.n)}${l.e?" ("+esc(l.e)+")":""}: ${l.q} ${esc(l.u)}</li>`).join("")}</ul><p><b>2. Entregables y condiciones.</b> ${esc(mt.obs)}</p><p><b>3. Precio y pago.</b> Total ${m(T.tot)}. Adelanto de ${a}% (${m(T.tot*a/100)}) para reservar la fecha y saldo de ${m(T.tot*(1-a/100))} contra entrega.${mt.cuenta?" Cuenta: "+esc(mt.cuenta)+".":""}</p><p><b>4. Cambios.</b> Se incluyen las rondas de cambios indicadas en el alcance; cada ronda adicional se cotiza aparte.</p><p><b>5. Derechos de uso.</b> El Cliente puede usar el material entregado para los fines acordados. El Prestador conserva los archivos originales y puede mostrar el trabajo en su portafolio, salvo pacto en contrario.</p><p><b>6. Vigencia y cancelación.</b> La propuesta vale ${esc(mt.vig)} días. Si el Cliente cancela con menos de 48 horas de anticipación, el adelanto no es reembolsable.</p><div style="display:flex;justify-content:space-around;margin-top:60px"><span>______________<br>Prestador</span><span>______________<br>Cliente</span></div>`;window.addEventListener("afterprint",sum,{once:true});window.print()};
+$("logo").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const k=Math.min(1,240/i.width),c=document.createElement("canvas");c.width=i.width*k;c.height=i.height*k;c.getContext("2d").drawImage(i,0,0,c.width,c.height);S.meta.logo=c.toDataURL("image/png");save();sum();flash("Logo cargado: saldrá en el PDF y el acuerdo.")};i.src=r.result};r.readAsDataURL(f)};
+const CL={"Rondas de cambios":"Se incluyen 2 rondas de cambios por pieza; cada ronda adicional se cotiza aparte.","Plazo de entrega":"Los archivos finales se entregan por enlace digital en un plazo de __ días hábiles desde la recepción del material y la aprobación del guion.","Material del cliente":"El cliente entrega logos, textos y accesos a las cuentas antes de iniciar; los retrasos mueven la fecha de entrega.","Contenido extra":"Las piezas o servicios no incluidos en esta cotización se presupuestan por separado.","Transporte":"Movilidad fuera de la zona acordada, viáticos y entradas a locaciones corren por cuenta del cliente.","Cancelación":"Si la producción se reprograma o cancela con menos de 48 horas de anticipación, el adelanto no es reembolsable."};
+$("cl").innerHTML="<small>Agregar condición:</small> "+Object.keys(CL).map(k=>`<button class="b" data-c="${k}">${k}</button>`).join(" ");
+$("cl").onclick=e=>{const k=e.target.dataset.c;if(!k)return;const o=$("obs"),v=o.value.trim();o.value=(v===OBS?"":v+"\n")+"• "+CL[k];S.meta.obs=o.value;save();sum()};
+$("pin").onclick=()=>{const T=totals(),mt=S.meta,co=+mt.costo||0,g0=T.base-co,cm=(+mt.com||0)/100*(mt.cbase==="gan"?Math.max(g0,0):T.base),g=g0-cm;$("doc").innerHTML=`<h2>USO INTERNO — no enviar al cliente</h2><p>Cotización ${esc(mt.num||"(sin guardar)")} · Cliente: <b>${esc(mt.cliente)}</b> · Proyecto: <b>${esc(mt.proyecto)}</b> · Fecha: ${esc(mt.fecha)}</p><table><tr><th>Servicio</th><th class="r">Cant.</th><th class="r">Subtotal</th></tr>${T.L.map(l=>`<tr><td>${esc(l.n)}${l.e?" ("+esc(l.e)+")":""}</td><td class="r">${l.q} ${esc(l.u)}</td><td class="r">${m(l.st)}</td></tr>`).join("")}</table><p style="text-align:right">Subtotal ${m(T.sub)}<br>Descuento −${m(T.d)}<br><b>Total cobrado ${m(T.tot)}</b></p><h3>Resumen interno</h3><table><tr><td>Costos internos</td><td class="r">${m(co)}</td></tr><tr><td>Ganancia antes de comisión</td><td class="r">${m(g0)}</td></tr><tr><td>Comisión${mt.refiere?" para "+esc(mt.refiere):""} (${+mt.com||0}% sobre ${mt.cbase==="gan"?"la ganancia":"el total"})</td><td class="r">${m(cm)}</td></tr><tr><td><b>Ganancia neta</b></td><td class="r"><b>${m(g)} (${T.base?Math.round(g/T.base*100):0}%)</b></td></tr></table>`;window.addEventListener("afterprint",sum,{once:true});window.print()};
+fill();tabs();list();sum();hist();
+</script>
+</body>
+</html>
